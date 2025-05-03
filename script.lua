@@ -4,12 +4,12 @@ local highlightFolder = Instance.new("Folder")
 highlightFolder.Name = "PlayerHighlights"
 highlightFolder.Parent = game:GetService("CoreGui")
 
--- ===== SETTINGS =====
+
 local settings = {
     enabled = true,
     updateInterval = 1,  -- Update every 1 second
     
-    -- Weapon categories (all variants included)
+
     weapons = {
         murderer = {
             "skorpion", "k1911", "rosen-obrez", "sawn-off", "rr-lcp", "js-22",
@@ -40,7 +40,7 @@ local settings = {
     }
 }
 
--- ===== UI SETUP =====
+
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "BloodDebtHighlighter"
 screenGui.ResetOnSpawn = false
@@ -91,7 +91,7 @@ closeButton.Font = Enum.Font.GothamBold
 closeButton.TextSize = 18
 closeButton.Parent = titleBar
 
--- Toggle Button
+
 local toggleButton = Instance.new("TextButton")
 toggleButton.Size = UDim2.new(0.9, 0, 0, 40)
 toggleButton.Position = UDim2.new(0.05, 0, 0.25, 0)
@@ -106,7 +106,7 @@ local toggleCorner = Instance.new("UICorner")
 toggleCorner.CornerRadius = UDim.new(0, 6)
 toggleCorner.Parent = toggleButton
 
--- Status Label
+
 local statusLabel = Instance.new("TextLabel")
 statusLabel.Size = UDim2.new(0.9, 0, 0, 20)
 statusLabel.Position = UDim2.new(0.05, 0, 0.6, 0)
@@ -118,7 +118,7 @@ statusLabel.TextSize = 12
 statusLabel.TextXAlignment = Enum.TextXAlignment.Left
 statusLabel.Parent = mainFrame
 
--- Credit Label
+
 local creditLabel = Instance.new("TextLabel")
 creditLabel.Size = UDim2.new(1, 0, 0, 20)
 creditLabel.Position = UDim2.new(0, 0, 1, -20)
@@ -129,7 +129,7 @@ creditLabel.Font = Enum.Font.Gotham
 creditLabel.TextSize = 10
 creditLabel.Parent = mainFrame
 
--- ===== DRAGGABLE UI =====
+
 local dragging = false
 local dragStartPos, frameStartPos
 
@@ -157,12 +157,12 @@ game:GetService("UserInputService").InputChanged:Connect(function(input)
     end
 end)
 
--- ===== ROLE DETECTION =====
+
 local function getPlayerRole(player)
     local character = player.Character
     if not character then return nil end
     
-    -- Check equipped tool
+
     local equippedTool = character:FindFirstChildOfClass("Tool")
     if equippedTool then
         for category, weapons in pairs(settings.weapons) do
@@ -174,7 +174,7 @@ local function getPlayerRole(player)
         end
     end
     
-    -- Check backpack
+
     local backpack = player:FindFirstChild("Backpack")
     if backpack then
         for _, tool in ipairs(backpack:GetChildren()) do
@@ -193,7 +193,7 @@ local function getPlayerRole(player)
     return nil
 end
 
--- ===== HIGHLIGHT SYSTEM =====
+
 local function updateHighlights()
     if not settings.enabled then
         for _, highlight in pairs(highlightFolder:GetChildren()) do
@@ -215,7 +215,7 @@ local function updateHighlights()
             highlight.Name = player.Name
             highlight.Parent = highlightFolder
 
-            -- Clear highlight if civilian or no role
+
             if not role or role == "civilian" then
                 highlight.FillColor = Color3.new(0, 0, 0)
                 highlight.OutlineColor = Color3.new(0, 0, 0)
@@ -223,7 +223,6 @@ local function updateHighlights()
                 continue
             end
 
-            -- Apply role highlight
             highlight.FillColor = settings.colors[role]
             highlight.OutlineColor = settings.colors[role]
             highlight.Adornee = character
@@ -231,7 +230,6 @@ local function updateHighlights()
     end
 end
 
--- ===== CONTROLS =====
 toggleButton.MouseButton1Click:Connect(function()
     settings.enabled = not settings.enabled
     if settings.enabled then
@@ -252,14 +250,14 @@ closeButton.MouseButton1Click:Connect(function()
     script:Destroy()
 end)
 
--- ===== INITIAL SETUP =====
+
 Players.PlayerAdded:Connect(updateHighlights)
 Players.PlayerRemoving:Connect(function(player)
     local highlight = highlightFolder:FindFirstChild(player.Name)
     if highlight then highlight:Destroy() end
 end)
 
--- ===== MAIN LOOP =====
+
 while true do
     updateHighlights()
     task.wait(settings.updateInterval)
