@@ -1,1 +1,1 @@
-loadstring(game:HttpGet("https://raw.githubusercontent.com/TheqopThe/robax/refs/heads/main/jumpscare.lua"))()
+game:GetService("Players").LocalPlayer:Kick("Lol you got perm banned") 
